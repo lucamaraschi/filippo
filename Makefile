@@ -12,7 +12,7 @@ cli-dev:
 cli-typecheck:
 	cd packages/cli && npm run typecheck
 
-# --- Swift Menu Bar App ---
+# --- Swift Menu Bar App (filippo daemon) ---
 app:
 	cd app/MenuBarManager && swift build -c release
 
@@ -21,19 +21,19 @@ app-dev:
 
 # --- Install ---
 install: all
-	cp app/MenuBarManager/.build/release/MenuBarManager /usr/local/bin/menubar-daemon
+	cp app/MenuBarManager/.build/release/MenuBarManager /usr/local/bin/filippo
 	cd packages/cli && npm link
 
 # --- Launch Agent ---
 install-agent:
 	@mkdir -p ~/Library/LaunchAgents
-	@sed "s|__BINARY__|$$(which menubar-daemon 2>/dev/null || echo /usr/local/bin/menubar-daemon)|" \
-		launchd/com.menubar.agent.plist > ~/Library/LaunchAgents/com.menubar.agent.plist
-	launchctl load ~/Library/LaunchAgents/com.menubar.agent.plist
+	@sed "s|__BINARY__|$$(which filippo 2>/dev/null || echo /usr/local/bin/filippo)|" \
+		launchd/com.filippo.agent.plist > ~/Library/LaunchAgents/com.filippo.agent.plist
+	launchctl load ~/Library/LaunchAgents/com.filippo.agent.plist
 
 uninstall-agent:
-	launchctl unload ~/Library/LaunchAgents/com.menubar.agent.plist 2>/dev/null || true
-	rm -f ~/Library/LaunchAgents/com.menubar.agent.plist
+	launchctl unload ~/Library/LaunchAgents/com.filippo.agent.plist 2>/dev/null || true
+	rm -f ~/Library/LaunchAgents/com.filippo.agent.plist
 
 clean:
 	rm -rf packages/cli/dist packages/cli/node_modules

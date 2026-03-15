@@ -14,6 +14,7 @@ import {
 import { fetchItems, sendRequest, isAppRunning, type MenuBarItem } from "./ipc.js";
 import { Configure } from "./configure.js";
 import { install, uninstall } from "./install.js";
+import { checkDaemon, printInstallInstructions, printNotRunningMessage } from "./daemon.js";
 
 const [, , command, ...args] = process.argv;
 
@@ -37,6 +38,8 @@ async function main() {
       return install(args[0]);
     case "uninstall":
       return uninstall();
+    case "doctor":
+      return cmdDoctor();
     default:
       printUsage();
       process.exit(command ? 1 : 0);
@@ -56,19 +59,88 @@ ${chalk.dim("Usage:")}
   menubar show-all           Temporarily show all hidden icons
   menubar install [binary]   Install launch agent for auto-start
   menubar uninstall          Remove launch agent
+  menubar doctor             Check if filippo daemon is installed and running
 
 ${chalk.dim("Config:")} ${defaultPath()}`);
+}
+
+async function requireDaemon(): Promise<boolean> {
+  const daemon = await checkDaemon();
+
+  if (!daemon.installed) {
+    printInstallInstructions();
+    return false;
+  }
+
+  if (!daemon.running) {
+    printNotRunningMessage();
+    return false;
+  }
+
+  return true;
+}
+
+async function cmdDoctor() {
+  const daemon = await checkDaemon();
+
+  console.log(`\n  ${chalk.bold("filippo doctor")}\n`);
+
+  // Daemon binary
+  if (daemon.installed) {
+    console.log(`  ${chalk.green("✓")} filippo daemon found at ${chalk.cyan(daemon.path)}`);
+  } else {
+    console.log(`  ${chalk.red("✗")} filippo daemon not found`);
+  }
+
+  // Daemon running
+  if (daemon.running) {
+    console.log(`  ${chalk.green("✓")} filippo daemon is running`);
+  } else if (daemon.installed) {
+    console.log(`  ${chalk.yellow("!")} filippo daemon is not running`);
+  }
+
+  // IPC socket
+  if (await isAppRunning()) {
+    console.log(`  ${chalk.green("✓")} IPC socket is responding`);
+  } else {
+    console.log(`  ${chalk.yellow("!")} IPC socket is not responding`);
+  }
+
+  // Config file
+  try {
+    await loadConfig();
+    console.log(`  ${chalk.green("✓")} Config loaded from ${chalk.dim(defaultPath())}`);
+  } catch (e: any) {
+    console.log(`  ${chalk.red("✗")} Config error: ${e.message}`);
+  }
+
+  console.log();
+
+  if (!daemon.installed) {
+    printInstallInstructions();
+  } else if (!daemon.running) {
+    printNotRunningMessage();
+  }
 }
 
 async function cmdConfigure() {
   const cfg = await loadConfig();
   let items: MenuBarItem[] = [];
 
-  if (await isAppRunning()) {
+  const daemon = await checkDaemon();
+
+  if (!daemon.installed) {
+    printInstallInstructions();
+    console.log(
+      chalk.dim("  You can still configure settings — they'll apply when filippo starts.\n"),
+    );
+    items = configToItems(cfg);
+  } else if (await isAppRunning()) {
     items = await fetchItems();
   } else {
+    printNotRunningMessage();
     console.log(
-      chalk.yellow("Menu bar app not running. Showing config-only items.\n"),
+      chalk.dim("  You can still configure settings — they'll apply when filippo starts.\n"),
     );
     items = configToItems(cfg);
   }
@@ -99,9 +171,13 @@ async function cmdStatus() {
   if (await isAppRunning()) {
     items = await fetchItems();
   } else {
-    const cfg = await loadConfig();
-    items = configToItems(cfg);
-    console.log(chalk.yellow("(app not running, showing config only)\n"));
+    if (!(await requireDaemon())) {
+      const cfg = await loadConfig();
+      items = configToItems(cfg);
+      console.log(chalk.dim("  Showing config only:\n"));
+    } else {
+      return;
+    }
   }
 
   for (const item of items) {
@@ -120,8 +196,7 @@ async function cmdStatus() {
 }
 
 async function cmdApply() {
-  if (!(await isAppRunning())) {
-    console.error(chalk.red("Menu bar app is not running."));
+  if (!(await requireDaemon())) {
     process.exit(1);
   }
 
@@ -145,21 +220,18 @@ async function cmdSetStatus(status: Status, name?: string) {
 
   if (await isAppRunning()) {
     await sendRequest({ type: "reload_config" });
-    console.log(
-      chalk.green(`Set ${name} to ${status}.`),
-    );
+    console.log(chalk.green(`Set ${name} to ${status}.`));
   } else {
     console.log(
       chalk.green(
-        `Set ${name} to ${status} (app not running, will apply on next launch).`,
+        `Set ${name} to ${status} (will apply when filippo starts).`,
       ),
     );
   }
 }
 
 async function cmdShowAll() {
-  if (!(await isAppRunning())) {
-    console.error(chalk.red("Menu bar app is not running."));
+  if (!(await requireDaemon())) {
     process.exit(1);
   }
 

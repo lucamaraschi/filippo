@@ -1,10 +1,11 @@
-import { writeFile, mkdir, readFile, access } from "node:fs/promises";
+import { writeFile, mkdir, access, unlink } from "node:fs/promises";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { execSync } from "node:child_process";
 import chalk from "chalk";
+import { findDaemon, printInstallInstructions } from "./daemon.js";
 
-const LABEL = "com.menubar.agent";
+const LABEL = "com.filippo.agent";
 
 function launchAgentsDir(): string {
   return join(homedir(), "Library", "LaunchAgents");
@@ -12,34 +13,6 @@ function launchAgentsDir(): string {
 
 function plistPath(): string {
   return join(launchAgentsDir(), `${LABEL}.plist`);
-}
-
-function findDaemonBinary(): string {
-  // Check common locations
-  const candidates = [
-    "/usr/local/bin/menubar-daemon",
-    join(homedir(), ".nix-profile/bin/menubar-daemon"),
-    join(homedir(), ".local/bin/menubar-daemon"),
-  ];
-
-  for (const p of candidates) {
-    try {
-      execSync(`test -x "${p}"`, { stdio: "ignore" });
-      return p;
-    } catch {
-      // not found
-    }
-  }
-
-  // Try which
-  try {
-    return execSync("which menubar-daemon", { encoding: "utf-8" }).trim();
-  } catch {
-    // fall through
-  }
-
-  // Default
-  return "/usr/local/bin/menubar-daemon";
 }
 
 function generatePlist(binaryPath: string): string {
@@ -58,27 +31,29 @@ function generatePlist(binaryPath: string): string {
     <key>KeepAlive</key>
     <true/>
     <key>StandardOutPath</key>
-    <string>/tmp/menubar.log</string>
+    <string>/tmp/filippo.log</string>
     <key>StandardErrorPath</key>
-    <string>/tmp/menubar.err</string>
+    <string>/tmp/filippo.err</string>
 </dict>
 </plist>`;
 }
 
 export async function install(binaryPath?: string) {
-  const bin = binaryPath ?? findDaemonBinary();
+  const bin = binaryPath ?? (await findDaemon());
+
+  if (!bin) {
+    printInstallInstructions();
+    console.log(
+      chalk.dim("  Once installed, run `menubar install` again to set up auto-start.\n"),
+    );
+    process.exit(1);
+  }
 
   // Verify binary exists
   try {
     await access(bin);
   } catch {
-    console.error(
-      chalk.red(
-        `Binary not found at ${bin}\n` +
-          `Build the app first with 'make app' and 'make install', ` +
-          `or pass the path: menubar install --binary /path/to/menubar-daemon`,
-      ),
-    );
+    printInstallInstructions();
     process.exit(1);
   }
 
@@ -104,7 +79,7 @@ export async function install(binaryPath?: string) {
   // Load the agent
   try {
     execSync(`launchctl load "${plistPath()}"`, { stdio: "inherit" });
-    console.log(chalk.green("Launch agent loaded. MenuBarManager will start at login."));
+    console.log(chalk.green("Launch agent loaded. filippo will start at login."));
   } catch {
     console.error(chalk.red("Failed to load launch agent."));
     process.exit(1);
@@ -122,12 +97,11 @@ export async function uninstall() {
 
   // Remove plist
   try {
-    const { unlink } = await import("node:fs/promises");
     await unlink(plistPath());
     console.log(`Removed ${plistPath()}`);
   } catch {
     // Doesn't exist
   }
 
-  console.log(chalk.green("MenuBarManager uninstalled."));
+  console.log(chalk.green("filippo uninstalled from auto-start."));
 }

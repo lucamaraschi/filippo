@@ -1,0 +1,49 @@
+class Filippo < Formula
+  desc "Declarative, config-driven menu bar icon manager for macOS"
+  homepage "https://github.com/filippo/menubar"
+  url "https://github.com/filippo/menubar/archive/refs/tags/v__VERSION__.tar.gz"
+  sha256 "__SHA256__"
+  license "MIT"
+
+  depends_on :macos
+  depends_on xcode: ["15.0", :build]
+
+  def install
+    cd "app/MenuBarManager" do
+      system "swift", "build",
+             "-c", "release",
+             "--disable-sandbox"
+      bin.install ".build/release/MenuBarManager" => "filippo"
+    end
+  end
+
+  service do
+    run opt_bin/"filippo"
+    keep_alive true
+    log_path var/"log/filippo.log"
+    error_log_path var/"log/filippo.err"
+  end
+
+  def caveats
+    <<~EOS
+      filippo requires Accessibility permission to manage menu bar icons.
+      On first launch, you'll be prompted to grant this in System Settings.
+
+      To start filippo now and auto-start on login:
+        brew services start filippo
+
+      To configure which icons are visible:
+        npx @menubar/cli configure
+
+      Or install the CLI globally:
+        npm install -g @menubar/cli
+        menubar configure
+
+      Config file: ~/.config/menubar/config.toml
+    EOS
+  end
+
+  test do
+    assert_match "MenuBarManager", shell_output("#{bin}/filippo --help 2>&1", 1)
+  end
+end

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.menubar.agent</string>
+    <string>com.filippo.agent</string>
     <key>ProgramArguments</key>
     <array>
         <string>__BINARY__</string>
@@ -13,8 +13,8 @@
     <key>KeepAlive</key>
     <true/>
     <key>StandardOutPath</key>
-    <string>/tmp/menubar.log</string>
+    <string>/tmp/filippo.log</string>
     <key>StandardErrorPath</key>
-    <string>/tmp/menubar.err</string>
+    <string>/tmp/filippo.err</string>
 </dict>
 </plist>
