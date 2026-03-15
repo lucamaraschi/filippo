@@ -17,6 +17,13 @@
 - CLI gracefully degrades when app isn't running (shows config-only items, saves config for later)
 - Launch agent plist template in `launchd/` with `__BINARY__` placeholder
 
+## Naming & References
+- GitHub repo: `lucamaraschi/filippo` (not `filippo/menubar`)
+- Homebrew tap: `lucamaraschi/tap`
+- npm package: `@filippo/cli` (not `@menubar/cli`)
+- Nix flake: `github:lucamaraschi/filippo`
+- Binary name remains `filippo` — only URLs/package names changed
+
 ## Useful Commands
 - `make app-dev` — run Swift app directly
 - `make cli-dev ARGS=configure` — run TUI configurator
