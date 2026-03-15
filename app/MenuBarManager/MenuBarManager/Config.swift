@@ -1,21 +1,16 @@
 import Foundation
+import TOMLKit
 
-/// Reads the TOML config file. We use a simple parser since our format is straightforward.
-struct MenuBarConfig: Codable {
+struct MenuBarConfig {
     var defaults: DefaultsConfig
     var icons: IconsConfig
 
-    struct DefaultsConfig: Codable {
+    struct DefaultsConfig {
         var unknown: String
         var pollInterval: Int
-
-        enum CodingKeys: String, CodingKey {
-            case unknown
-            case pollInterval = "poll_interval"
-        }
     }
 
-    struct IconsConfig: Codable {
+    struct IconsConfig {
         var visible: [String]
         var hidden: [String]
         var disabled: [String]
@@ -31,7 +26,30 @@ struct MenuBarConfig: Codable {
         guard let content = try? String(contentsOf: path, encoding: .utf8) else {
             return MenuBarConfig.defaultConfig
         }
-        return parse(toml: content)
+
+        guard let table = try? TOMLTable(string: content) else {
+            print("Warning: failed to parse config TOML, using defaults")
+            return MenuBarConfig.defaultConfig
+        }
+
+        var config = MenuBarConfig.defaultConfig
+
+        if let defaults = table["defaults"] as? TOMLTable {
+            if let unknown = defaults["unknown"] as? String {
+                config.defaults.unknown = unknown
+            }
+            if let poll = defaults["poll_interval"] as? Int {
+                config.defaults.pollInterval = poll
+            }
+        }
+
+        if let icons = table["icons"] as? TOMLTable {
+            config.icons.visible = tomlArrayToStrings(icons["visible"])
+            config.icons.hidden = tomlArrayToStrings(icons["hidden"])
+            config.icons.disabled = tomlArrayToStrings(icons["disabled"])
+        }
+
+        return config
     }
 
     static var defaultConfig: MenuBarConfig {
@@ -48,67 +66,14 @@ struct MenuBarConfig: Codable {
         return defaults.unknown
     }
 
-    /// Simple TOML parser for our specific config format.
-    static func parse(toml: String) -> MenuBarConfig {
-        var config = MenuBarConfig.defaultConfig
-        var currentSection = ""
-
-        for line in toml.components(separatedBy: .newlines) {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-
-            // Skip comments and empty lines
-            if trimmed.isEmpty || trimmed.hasPrefix("#") { continue }
-
-            // Section headers
-            if trimmed.hasPrefix("[") && trimmed.hasSuffix("]") {
-                currentSection = String(trimmed.dropFirst().dropLast())
-                continue
-            }
-
-            // Key-value pairs
-            let parts = trimmed.split(separator: "=", maxSplits: 1)
-            guard parts.count == 2 else { continue }
-
-            let key = parts[0].trimmingCharacters(in: .whitespaces)
-            let value = parts[1].trimmingCharacters(in: .whitespaces)
-
-            switch currentSection {
-            case "defaults":
-                switch key {
-                case "unknown":
-                    config.defaults.unknown = value.replacingOccurrences(of: "\"", with: "")
-                case "poll_interval":
-                    config.defaults.pollInterval = Int(value) ?? 5
-                default: break
-                }
-            case "icons":
-                let items = parseTomlArray(value)
-                switch key {
-                case "visible":
-                    config.icons.visible = items
-                case "hidden":
-                    config.icons.hidden = items
-                case "disabled":
-                    config.icons.disabled = items
-                default: break
-                }
-            default: break
+    private static func tomlArrayToStrings(_ value: TOMLValueConvertible?) -> [String] {
+        guard let array = value as? TOMLArray else { return [] }
+        var result: [String] = []
+        for i in 0..<array.count {
+            if let str = array[i] as? String {
+                result.append(str)
             }
         }
-
-        return config
-    }
-
-    /// Parse a TOML array like ["foo", "bar"] or a multiline array
-    private static func parseTomlArray(_ value: String) -> [String] {
-        // Handle inline arrays: ["foo", "bar"]
-        let stripped = value
-            .replacingOccurrences(of: "[", with: "")
-            .replacingOccurrences(of: "]", with: "")
-
-        return stripped
-            .split(separator: ",")
-            .map { $0.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: "\"", with: "") }
-            .filter { !$0.isEmpty }
+        return result
     }
 }

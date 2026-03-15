@@ -3,9 +3,19 @@ import AppKit
 class AppDelegate: NSObject, NSApplicationDelegate {
     private var controller: MenuBarController!
     private var ipcServer: IPCServer!
+    private var accessibilityManager: AccessibilityManager!
     private var configWatcher: DispatchSourceFileSystemObject?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        accessibilityManager = AccessibilityManager()
+
+        // Check accessibility first — CGEvent posting requires it
+        accessibilityManager.ensureAccess { [weak self] in
+            self?.startApp()
+        }
+    }
+
+    private func startApp() {
         let config = MenuBarConfig.load()
         controller = MenuBarController(config: config)
         ipcServer = IPCServer(controller: controller)
@@ -18,8 +28,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        controller.stop()
-        ipcServer.stop()
+        controller?.stop()
+        ipcServer?.stop()
         configWatcher?.cancel()
     }
 
@@ -28,10 +38,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let path = MenuBarConfig.defaultPath.path
         let dir = (path as NSString).deletingLastPathComponent
 
-        // Ensure directory exists
         try? FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
 
-        // Create the file if it doesn't exist
         if !FileManager.default.fileExists(atPath: path) {
             FileManager.default.createFile(atPath: path, contents: nil)
         }

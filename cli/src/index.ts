@@ -13,6 +13,7 @@ import {
 } from "./config.js";
 import { fetchItems, sendRequest, isAppRunning, type MenuBarItem } from "./ipc.js";
 import { Configure } from "./configure.js";
+import { install, uninstall } from "./install.js";
 
 const [, , command, ...args] = process.argv;
 
@@ -32,6 +33,10 @@ async function main() {
       return cmdSetStatus("disabled", args[0]);
     case "show-all":
       return cmdShowAll();
+    case "install":
+      return install(args[0]);
+    case "uninstall":
+      return uninstall();
     default:
       printUsage();
       process.exit(command ? 1 : 0);
@@ -49,6 +54,8 @@ ${chalk.dim("Usage:")}
   menubar hide <name>        Set an icon to hidden
   menubar disable <name>     Set an icon to disabled
   menubar show-all           Temporarily show all hidden icons
+  menubar install [binary]   Install launch agent for auto-start
+  menubar uninstall          Remove launch agent
 
 ${chalk.dim("Config:")} ${defaultPath()}`);
 }

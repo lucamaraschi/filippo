@@ -4,7 +4,9 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:www.hammerspoon.org)",
       "WebFetch(domain:research.macpaw.com)",
-      "Bash(cd /Users/batman/src/lm/filippo/app/MenuBarManager && swift build 2>&1)"
+      "Bash(cd /Users/batman/src/lm/filippo/app/MenuBarManager && swift build 2>&1)",
+      "WebFetch(domain:swiftpackageindex.com)",
+      "Bash(gh api:*)"
     ]
   }
 }
