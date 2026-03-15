@@ -4,13 +4,13 @@ all: cli app
 
 # --- CLI (TypeScript + Ink) ---
 cli:
-	cd cli && npm run build
+	cd packages/cli && npm run build
 
 cli-dev:
-	cd cli && npx tsx src/index.ts $(ARGS)
+	cd packages/cli && npx tsx src/index.ts $(ARGS)
 
-cli-install:
-	cd cli && npm install
+cli-typecheck:
+	cd packages/cli && npm run typecheck
 
 # --- Swift Menu Bar App ---
 app:
@@ -22,7 +22,7 @@ app-dev:
 # --- Install ---
 install: all
 	cp app/MenuBarManager/.build/release/MenuBarManager /usr/local/bin/menubar-daemon
-	cd cli && npm link
+	cd packages/cli && npm link
 
 # --- Launch Agent ---
 install-agent:
@@ -36,5 +36,5 @@ uninstall-agent:
 	rm -f ~/Library/LaunchAgents/com.menubar.agent.plist
 
 clean:
-	rm -rf cli/dist cli/node_modules
+	rm -rf packages/cli/dist packages/cli/node_modules
 	cd app/MenuBarManager && swift package clean
