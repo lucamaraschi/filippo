@@ -1,0 +1,27 @@
+# MenuBarManager configuration
+# Place this file at ~/.config/menubar/config.toml
+
+[defaults]
+# How to treat icons not listed below: "visible" | "hidden" | "disabled"
+unknown = "hidden"
+
+# Poll interval in seconds for detecting new menu bar items
+poll_interval = 5
+
+[icons]
+# Always visible in the menu bar
+visible = [
+  "Control Center",
+  "Clock",
+]
+
+# Hidden behind the fold (click to reveal, like Hidden Bar)
+hidden = [
+  "Bluetooth",
+  "TimeMachine",
+]
+
+# Never shown
+disabled = [
+  "Spotlight",
+]
