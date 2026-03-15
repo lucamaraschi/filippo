@@ -5,7 +5,7 @@ import { homedir } from "node:os";
 import chalk from "chalk";
 
 const DAEMON_NAME = "filippo";
-const BREW_TAP = "filippo/tap";
+const BREW_TAP = "lucamaraschi/tap";
 const BREW_FORMULA = "filippo";
 
 const SEARCH_PATHS = [
@@ -67,10 +67,10 @@ export function printInstallInstructions(): void {
   console.log(chalk.bold("  Install via Homebrew (recommended):"));
   console.log(chalk.cyan(`    brew install ${BREW_TAP}/${BREW_FORMULA}\n`));
   console.log(chalk.bold("  Install via Nix:"));
-  console.log(chalk.cyan(`    nix profile install github:filippo/menubar#filippo\n`));
+  console.log(chalk.cyan(`    nix profile install github:lucamaraschi/filippo#filippo\n`));
   console.log(chalk.bold("  Install from source:"));
-  console.log(chalk.cyan("    git clone https://github.com/filippo/menubar"));
-  console.log(chalk.cyan("    cd menubar && make app install\n"));
+  console.log(chalk.cyan("    git clone https://github.com/lucamaraschi/filippo"));
+  console.log(chalk.cyan("    cd filippo && make app install\n"));
   console.log(
     chalk.dim(
       `  After installing, start it with: ${chalk.reset("filippo")}`,

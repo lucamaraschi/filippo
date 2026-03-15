@@ -1,5 +1,5 @@
 {
-  "name": "@menubar/cli",
+  "name": "@filippo/cli",
   "version": "0.1.0",
   "description": "Declarative menu bar icon manager for macOS — CLI & TUI",
   "type": "module",

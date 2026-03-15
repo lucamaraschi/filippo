@@ -1,7 +1,7 @@
 class Filippo < Formula
   desc "Declarative, config-driven menu bar icon manager for macOS"
-  homepage "https://github.com/filippo/menubar"
-  url "https://github.com/filippo/menubar/archive/refs/tags/v__VERSION__.tar.gz"
+  homepage "https://github.com/lucamaraschi/filippo"
+  url "https://github.com/lucamaraschi/filippo/archive/refs/tags/v__VERSION__.tar.gz"
   sha256 "__SHA256__"
   license "MIT"
 
@@ -33,10 +33,10 @@ class Filippo < Formula
         brew services start filippo
 
       To configure which icons are visible:
-        npx @menubar/cli configure
+        npx @filippo/cli configure
 
       Or install the CLI globally:
-        npm install -g @menubar/cli
+        npm install -g @filippo/cli
         menubar configure
 
       Config file: ~/.config/menubar/config.toml
