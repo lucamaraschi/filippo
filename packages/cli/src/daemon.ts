@@ -78,7 +78,7 @@ export function printInstallInstructions(): void {
   );
   console.log(
     chalk.dim(
-      `  Or set it to auto-start with:    ${chalk.reset("menubar install")}`,
+      `  Or set it to auto-start with:    ${chalk.reset("filippo install")}`,
     ),
   );
   console.log();
@@ -91,5 +91,5 @@ export function printNotRunningMessage(): void {
   console.log(chalk.bold("  Start it with:"));
   console.log(chalk.cyan(`    filippo\n`));
   console.log(chalk.bold("  Or auto-start on login:"));
-  console.log(chalk.cyan(`    menubar install\n`));
+  console.log(chalk.cyan(`    filippo install\n`));
 }

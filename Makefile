@@ -7,7 +7,7 @@ cli:
 	cd packages/cli && npm run build
 
 cli-dev:
-	cd packages/cli && npx tsx src/index.ts $(ARGS)
+	cd packages/cli && npx tsx src/index.ts $(CMD)
 
 cli-typecheck:
 	cd packages/cli && npm run typecheck

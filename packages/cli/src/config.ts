@@ -18,7 +18,7 @@ export interface Config {
 }
 
 export function defaultPath(): string {
-  return join(homedir(), ".config", "menubar", "config.toml");
+  return join(homedir(), ".config", "filippo", "config.toml");
 }
 
 export function defaultConfig(): Config {

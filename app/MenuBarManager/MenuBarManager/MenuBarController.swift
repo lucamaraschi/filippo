@@ -102,7 +102,7 @@ class MenuBarController: NSObject {
         if let button = dividerItem?.button {
             button.image = NSImage(
                 systemSymbolName: "chevron.left",
-                accessibilityDescription: "MenuBar Manager"
+                accessibilityDescription: "filippo"
             )
             button.action = #selector(toggleReveal)
             button.target = self

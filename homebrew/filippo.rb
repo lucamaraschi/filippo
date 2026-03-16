@@ -37,9 +37,9 @@ class Filippo < Formula
 
       Or install the CLI globally:
         npm install -g @filippo/cli
-        menubar configure
+        filippo configure
 
-      Config file: ~/.config/menubar/config.toml
+      Config file: ~/.config/filippo/config.toml
     EOS
   end
 

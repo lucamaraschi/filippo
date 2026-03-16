@@ -25,8 +25,8 @@ export function socketPath(): string {
     homedir(),
     "Library",
     "Application Support",
-    "menubar",
-    "menubar.sock",
+    "filippo",
+    "filippo.sock",
   );
 }
 

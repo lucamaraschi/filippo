@@ -18,7 +18,7 @@ struct MenuBarConfig {
 
     static let defaultPath: URL = {
         let home = FileManager.default.homeDirectoryForCurrentUser
-        return home.appendingPathComponent(".config/menubar/config.toml")
+        return home.appendingPathComponent(".config/filippo/config.toml")
     }()
 
     static func load(from url: URL? = nil) -> MenuBarConfig {

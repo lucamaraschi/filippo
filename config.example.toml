@@ -1,5 +1,5 @@
-# MenuBarManager configuration
-# Place this file at ~/.config/menubar/config.toml
+# filippo configuration
+# Place this file at ~/.config/filippo/config.toml
 
 [defaults]
 # How to treat icons not listed below: "visible" | "hidden" | "disabled"

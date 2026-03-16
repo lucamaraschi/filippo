@@ -47,19 +47,19 @@ async function main() {
 }
 
 function printUsage() {
-  console.log(`${chalk.bold("menubar")} - declarative menu bar icon manager
+  console.log(`${chalk.bold("filippo")} - declarative menu bar icon manager
 
 ${chalk.dim("Usage:")}
-  menubar configure          Interactive TUI to configure icon visibility
-  menubar status             Show current state of all menu bar icons
-  menubar apply              Apply config to running menu bar app
-  menubar show <name>        Set an icon to visible
-  menubar hide <name>        Set an icon to hidden
-  menubar disable <name>     Set an icon to disabled
-  menubar show-all           Temporarily show all hidden icons
-  menubar install [binary]   Install launch agent for auto-start
-  menubar uninstall          Remove launch agent
-  menubar doctor             Check if filippo daemon is installed and running
+  filippo configure          Interactive TUI to configure icon visibility
+  filippo status             Show current state of all menu bar icons
+  filippo apply              Apply config to running menu bar app
+  filippo show <name>        Set an icon to visible
+  filippo hide <name>        Set an icon to hidden
+  filippo disable <name>     Set an icon to disabled
+  filippo show-all           Temporarily show all hidden icons
+  filippo install [binary]   Install launch agent for auto-start
+  filippo uninstall          Remove launch agent
+  filippo doctor             Check if filippo daemon is installed and running
 
 ${chalk.dim("Config:")} ${defaultPath()}`);
 }
@@ -210,7 +210,7 @@ async function cmdApply() {
 
 async function cmdSetStatus(status: Status, name?: string) {
   if (!name) {
-    console.error(`Usage: menubar ${command} <icon-name>`);
+    console.error(`Usage: filippo ${command} <icon-name>`);
     process.exit(1);
   }
 
@@ -258,6 +258,6 @@ function configToItems(cfg: Config): MenuBarItem[] {
 }
 
 main().catch((e) => {
-  console.error(chalk.red(`menubar: ${e.message}`));
+  console.error(chalk.red(`filippo: ${e.message}`));
   process.exit(1);
 });

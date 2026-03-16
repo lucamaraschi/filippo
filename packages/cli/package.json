@@ -5,7 +5,7 @@
   "type": "module",
   "license": "MIT",
   "bin": {
-    "menubar": "./dist/index.js"
+    "filippo": "./dist/index.js"
   },
   "files": [
     "dist"

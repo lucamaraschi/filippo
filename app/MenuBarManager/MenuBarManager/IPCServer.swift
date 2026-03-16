@@ -12,9 +12,9 @@ class IPCServer {
         self.controller = controller
 
         let appSupport = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Application Support/menubar")
+            .appendingPathComponent("Library/Application Support/filippo")
         try? FileManager.default.createDirectory(at: appSupport, withIntermediateDirectories: true)
-        self.socketPath = appSupport.appendingPathComponent("menubar.sock").path
+        self.socketPath = appSupport.appendingPathComponent("filippo.sock").path
     }
 
     func start() {

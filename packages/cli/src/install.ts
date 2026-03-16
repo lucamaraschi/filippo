@@ -44,7 +44,7 @@ export async function install(binaryPath?: string) {
   if (!bin) {
     printInstallInstructions();
     console.log(
-      chalk.dim("  Once installed, run `menubar install` again to set up auto-start.\n"),
+      chalk.dim("  Once installed, run `filippo install` again to set up auto-start.\n"),
     );
     process.exit(1);
   }

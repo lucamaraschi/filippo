@@ -29,10 +29,10 @@ class AccessibilityManager {
         let alert = NSAlert()
         alert.messageText = "Accessibility Permission Required"
         alert.informativeText = """
-            MenuBarManager needs Accessibility access to manage menu bar icons. \
+            filippo needs Accessibility access to manage menu bar icons. \
             This allows the app to rearrange and hide icons in your menu bar.
 
-            Click "Open System Settings" to grant access, then enable MenuBarManager \
+            Click "Open System Settings" to grant access, then enable filippo \
             in the list.
             """
         alert.alertStyle = .informational
