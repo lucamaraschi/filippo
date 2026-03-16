@@ -4,15 +4,15 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 import chalk from "chalk";
 
-const DAEMON_NAME = "filippo";
+const DAEMON_NAME = "filippod";
 const BREW_TAP = "lucamaraschi/tap";
 const BREW_FORMULA = "filippo";
 
 const SEARCH_PATHS = [
-  "/usr/local/bin/filippo",
-  "/opt/homebrew/bin/filippo",
-  join(homedir(), ".nix-profile/bin/filippo"),
-  join(homedir(), ".local/bin/filippo"),
+  "/usr/local/bin/filippod",
+  "/opt/homebrew/bin/filippod",
+  join(homedir(), ".nix-profile/bin/filippod"),
+  join(homedir(), ".local/bin/filippod"),
 ];
 
 export interface DaemonStatus {
@@ -58,10 +58,10 @@ export async function checkDaemon(): Promise<DaemonStatus> {
 
 export function printInstallInstructions(): void {
   console.log(
-    chalk.yellow.bold(`\n  ${DAEMON_NAME} is not installed.\n`),
+    chalk.yellow.bold(`\n  filippo daemon is not installed.\n`),
   );
   console.log(
-    `  The ${chalk.cyan(DAEMON_NAME)} daemon is required to manage menu bar icons.`,
+    `  The ${chalk.cyan("filippod")} daemon is required to manage menu bar icons.`,
   );
   console.log(`  It runs in the background and does the actual hiding/showing.\n`);
   console.log(chalk.bold("  Install via Homebrew (recommended):"));
@@ -73,7 +73,7 @@ export function printInstallInstructions(): void {
   console.log(chalk.cyan("    cd filippo && make app install\n"));
   console.log(
     chalk.dim(
-      `  After installing, start it with: ${chalk.reset("filippo")}`,
+      `  After installing, start it with: ${chalk.reset("filippod")}`,
     ),
   );
   console.log(
@@ -86,10 +86,10 @@ export function printInstallInstructions(): void {
 
 export function printNotRunningMessage(): void {
   console.log(
-    chalk.yellow(`\n  ${DAEMON_NAME} is installed but not running.\n`),
+    chalk.yellow(`\n  filippo daemon is installed but not running.\n`),
   );
   console.log(chalk.bold("  Start it with:"));
-  console.log(chalk.cyan(`    filippo\n`));
+  console.log(chalk.cyan(`    filippod\n`));
   console.log(chalk.bold("  Or auto-start on login:"));
   console.log(chalk.cyan(`    filippo install\n`));
 }

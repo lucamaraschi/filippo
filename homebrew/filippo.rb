@@ -13,12 +13,12 @@ class Filippo < Formula
       system "swift", "build",
              "-c", "release",
              "--disable-sandbox"
-      bin.install ".build/release/MenuBarManager" => "filippo"
+      bin.install ".build/release/MenuBarManager" => "filippod"
     end
   end
 
   service do
-    run opt_bin/"filippo"
+    run opt_bin/"filippod"
     keep_alive true
     log_path var/"log/filippo.log"
     error_log_path var/"log/filippo.err"
@@ -44,6 +44,6 @@ class Filippo < Formula
   end
 
   test do
-    assert_match "MenuBarManager", shell_output("#{bin}/filippo --help 2>&1", 1)
+    assert_match "MenuBarManager", shell_output("#{bin}/filippod --help 2>&1", 1)
   end
 end

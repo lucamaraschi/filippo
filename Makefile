@@ -21,13 +21,13 @@ app-dev:
 
 # --- Install ---
 install: all
-	cp app/MenuBarManager/.build/release/MenuBarManager /usr/local/bin/filippo
+	cp app/MenuBarManager/.build/release/MenuBarManager /usr/local/bin/filippod
 	cd packages/cli && npm link
 
 # --- Launch Agent ---
 install-agent:
 	@mkdir -p ~/Library/LaunchAgents
-	@sed "s|__BINARY__|$$(which filippo 2>/dev/null || echo /usr/local/bin/filippo)|" \
+	@sed "s|__BINARY__|$$(which filippod 2>/dev/null || echo /usr/local/bin/filippod)|" \
 		launchd/com.filippo.agent.plist > ~/Library/LaunchAgents/com.filippo.agent.plist
 	launchctl load ~/Library/LaunchAgents/com.filippo.agent.plist
 
