@@ -154,11 +154,24 @@ jobs:
 
       - name: Check out Homebrew tap
         if: ${{ steps.tap-token.outputs.available == 'true' }}
-        uses: actions/checkout@v4
-        with:
-          repository: lucamaraschi/homebrew-tap
-          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-          path: tap
+        shell: bash
+        env:
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          git init tap
+          cd tap
+          git remote add origin "https://x-access-token:${HOMEBREW_TAP_TOKEN}@github.com/lucamaraschi/homebrew-tap.git"
+          branch="$(git ls-remote --symref origin HEAD | awk '/^ref:/ {sub("refs/heads/","",$2); print $2}')"
+
+          if [[ -n "${branch}" ]]; then
+            git fetch --depth=1 origin "${branch}"
+            git checkout -B "${branch}" FETCH_HEAD
+          else
+            branch="main"
+            git checkout --orphan "${branch}"
+          fi
+
+          echo "TAP_BRANCH=${branch}" >> "$GITHUB_ENV"
 
       - name: Update formula in tap
         if: ${{ steps.tap-token.outputs.available == 'true' }}
@@ -171,7 +184,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Formula/filippo.rb
           git commit -m "filippo ${{ needs.build-release.outputs.version }}" || exit 0
-          git push
+          git push origin "HEAD:${TAP_BRANCH}"
 
       - name: Skip tap update
         if: ${{ steps.tap-token.outputs.available != 'true' }}
