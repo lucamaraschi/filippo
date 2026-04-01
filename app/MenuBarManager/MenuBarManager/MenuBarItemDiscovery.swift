@@ -1,4 +1,5 @@
 import AppKit
+import ApplicationServices
 import CoreGraphics
 
 /// Represents a discovered menu bar item.
@@ -12,6 +13,10 @@ struct DiscoveredMenuItem {
 
 /// Discovers menu bar items using CGWindowListCopyWindowInfo.
 class MenuBarItemDiscovery {
+    private struct AccessibilityMenuItemInfo {
+        let frame: CGRect
+        let label: String
+    }
 
     /// The menu bar window level constant.
     private static let menuBarLevel: Int32 = 25 // kCGStatusWindowLevel
@@ -26,6 +31,7 @@ class MenuBarItemDiscovery {
         }
 
         var items: [DiscoveredMenuItem] = []
+        var accessibilityItemsByPID: [pid_t: [AccessibilityMenuItemInfo]] = [:]
 
         for info in windowInfoList {
             guard let windowLevel = info[kCGWindowLayer as String] as? Int32,
@@ -55,16 +61,32 @@ class MenuBarItemDiscovery {
                 continue
             }
 
-            // Use owner name as the item identifier
-            // Some owners have multiple items, but for config purposes the owner name works
             let title = info[kCGWindowName as String] as? String ?? ownerName
+            let normalizedTitle = title.isEmpty ? ownerName : title
+            let resolvedTitle: String
+
+            if normalizedTitle == ownerName {
+                let accessibilityItems = accessibilityItemsByPID[ownerPID] ?? {
+                    let discovered = accessibilityItemsForPID(ownerPID)
+                    accessibilityItemsByPID[ownerPID] = discovered
+                    return discovered
+                }()
+
+                resolvedTitle = bestAccessibilityLabel(
+                    for: frame,
+                    fallback: normalizedTitle,
+                    accessibilityItems: accessibilityItems
+                )
+            } else {
+                resolvedTitle = normalizedTitle
+            }
 
             items.append(DiscoveredMenuItem(
                 windowID: windowID,
                 ownerName: ownerName,
                 ownerPID: ownerPID,
                 frame: frame,
-                title: title.isEmpty ? ownerName : title
+                title: resolvedTitle
             ))
         }
 
@@ -84,6 +106,116 @@ class MenuBarItemDiscovery {
         }
 
         return unique
+    }
+
+    private func accessibilityItemsForPID(_ pid: pid_t) -> [AccessibilityMenuItemInfo] {
+        let app = AXUIElementCreateApplication(pid)
+
+        guard let menuBarValue = copyAttributeValue(
+            for: app,
+            attribute: kAXMenuBarAttribute as String
+        ) else {
+            return []
+        }
+        let menuBar = menuBarValue as! AXUIElement
+
+        return collectAccessibilityItems(from: menuBar, depth: 0)
+    }
+
+    private func collectAccessibilityItems(
+        from element: AXUIElement,
+        depth: Int
+    ) -> [AccessibilityMenuItemInfo] {
+        guard depth <= 2 else { return [] }
+
+        var results: [AccessibilityMenuItemInfo] = []
+
+        if let frame = accessibilityFrame(for: element),
+           let label = accessibilityLabel(for: element),
+           !label.isEmpty {
+            results.append(AccessibilityMenuItemInfo(frame: frame, label: label))
+        }
+
+        guard let children = copyAttributeValue(
+            for: element,
+            attribute: kAXChildrenAttribute as String
+        ) as? [AXUIElement] else {
+            return results
+        }
+
+        for child in children {
+            results.append(contentsOf: collectAccessibilityItems(from: child, depth: depth + 1))
+        }
+
+        return results
+    }
+
+    private func accessibilityLabel(for element: AXUIElement) -> String? {
+        let keys = [
+            kAXTitleAttribute as String,
+            kAXDescriptionAttribute as String,
+            kAXHelpAttribute as String,
+        ]
+
+        for key in keys {
+            if let value = copyAttributeValue(for: element, attribute: key) as? String {
+                let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmed.isEmpty {
+                    return trimmed
+                }
+            }
+        }
+
+        return nil
+    }
+
+    private func accessibilityFrame(for element: AXUIElement) -> CGRect? {
+        guard
+            let positionValue = copyAttributeValue(for: element, attribute: kAXPositionAttribute as String),
+            let sizeValue = copyAttributeValue(for: element, attribute: kAXSizeAttribute as String)
+        else {
+            return nil
+        }
+        let positionAXValue = positionValue as! AXValue
+        let sizeAXValue = sizeValue as! AXValue
+
+        var position = CGPoint.zero
+        var size = CGSize.zero
+
+        guard
+            AXValueGetType(positionAXValue) == .cgPoint,
+            AXValueGetType(sizeAXValue) == .cgSize,
+            AXValueGetValue(positionAXValue, .cgPoint, &position),
+            AXValueGetValue(sizeAXValue, .cgSize, &size)
+        else {
+            return nil
+        }
+
+        return CGRect(origin: position, size: size)
+    }
+
+    private func copyAttributeValue(
+        for element: AXUIElement,
+        attribute: String
+    ) -> AnyObject? {
+        var value: CFTypeRef?
+        let result = AXUIElementCopyAttributeValue(element, attribute as CFString, &value)
+        guard result == .success else { return nil }
+        return value
+    }
+
+    private func bestAccessibilityLabel(
+        for frame: CGRect,
+        fallback: String,
+        accessibilityItems: [AccessibilityMenuItemInfo]
+    ) -> String {
+        let overlapping = accessibilityItems
+            .filter { $0.frame.intersects(frame.insetBy(dx: -8, dy: -8)) }
+            .sorted { lhs, rhs in
+                abs(lhs.frame.midX - frame.midX) < abs(rhs.frame.midX - frame.midX)
+            }
+
+        return overlapping.first?.label ?? fallback
     }
 
     /// Get a display name for the menu bar item.

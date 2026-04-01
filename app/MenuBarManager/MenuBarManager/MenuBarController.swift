@@ -242,6 +242,14 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         reloadItem.target = self
         menu.addItem(reloadItem)
 
+        let setupItem = NSMenuItem(
+            title: "Run setup wizard",
+            action: #selector(runSetupWizardFromMenu),
+            keyEquivalent: ""
+        )
+        setupItem.target = self
+        menu.addItem(setupItem)
+
         menu.addItem(.separator())
 
         let names = itemNamesForMenu()
@@ -283,6 +291,10 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
     @objc private func reloadConfigFromMenu() {
         reloadConfig()
+    }
+
+    @objc private func runSetupWizardFromMenu() {
+        NotificationCenter.default.post(name: .filippoRunSetupWizard, object: nil)
     }
 
     @objc private func toggleStartAtLogin() {

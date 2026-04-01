@@ -64,6 +64,9 @@ On first launch, Filippo should:
 
 - ask for Accessibility permission
 - ask whether it should start automatically at login
+- offer a first-run setup wizard with:
+  - `Review Current Icons`
+  - `Minimal Experience`
 
 Then configure your icons with either:
 
@@ -167,6 +170,9 @@ make cli-check
 make app-check
 make app-test
 make reinstall
+make brew-install
+make brew-reinstall
+make brew-uninstall
 ```
 
 Run the daemon in debug mode:

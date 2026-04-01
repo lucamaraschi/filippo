@@ -1,4 +1,4 @@
-.PHONY: help all bootstrap deps build cli cli-dev cli-typecheck cli-test cli-test-coverage cli-check cli-smoke doctor app app-dev app-check app-test test sanity install-daemon install-cli install reinstall uninstall install-agent uninstall-agent release-formula clean
+.PHONY: help all bootstrap deps build cli cli-dev cli-typecheck cli-test cli-test-coverage cli-check cli-smoke doctor app app-dev app-check app-test test sanity install-daemon install-cli install reinstall uninstall install-agent uninstall-agent brew-install brew-reinstall brew-uninstall release-formula clean
 
 SWIFT_SCRATCH_PATH ?= /tmp/filippo-swift-build
 CLANG_MODULE_CACHE_PATH ?= /tmp/filippo-clang-cache
@@ -37,6 +37,9 @@ help:
 	@printf "  make install            Build and install both daemon and CLI\n"
 	@printf "  make reinstall          Rebuild and reinstall both daemon and CLI\n"
 	@printf "  make uninstall          Remove installed daemon binary and npm unlink the CLI\n"
+	@printf "  make brew-install       Install filippo from lucamaraschi/tap on this Mac\n"
+	@printf "  make brew-reinstall     Reinstall filippo from lucamaraschi/tap on this Mac\n"
+	@printf "  make brew-uninstall     Remove filippo and untap lucamaraschi/tap on this Mac\n"
 	@printf "  make release-formula    Render the Homebrew formula from VERSION, RELEASE_URL, and SHA256\n"
 	@printf "\n"
 	@printf "  Override install path with: make install BIN_DIR=$$HOME/.local/bin\n"
@@ -116,6 +119,20 @@ reinstall: build install
 uninstall:
 	rm -f $(DAEMON_DEST)
 	cd packages/cli && npm unlink
+
+brew-install:
+	brew update
+	brew tap lucamaraschi/tap
+	brew install lucamaraschi/tap/filippo
+	open /opt/homebrew/opt/filippo/Filippo.app
+
+brew-reinstall:
+	brew reinstall lucamaraschi/tap/filippo
+	open /opt/homebrew/opt/filippo/Filippo.app
+
+brew-uninstall:
+	-brew uninstall filippo
+	-brew untap lucamaraschi/tap
 
 # --- Launch Agent ---
 install-agent:
