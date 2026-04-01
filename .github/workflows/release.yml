@@ -102,16 +102,25 @@ jobs:
             "${{ steps.sha.outputs.source_sha }}" \
             dist/filippo.rb
 
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.meta.outputs.version }}
-          files: |
+      - name: Publish GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${{ steps.meta.outputs.version }}"
+          assets=(
             dist/checksums.txt
             dist/filippo.rb
-            dist/${{ steps.meta.outputs.source_asset }}
-            dist/filippod-${{ steps.meta.outputs.version }}-macos.tar.gz
+            "dist/${{ steps.meta.outputs.source_asset }}"
+            "dist/filippod-${version}-macos.tar.gz"
             dist/*.tgz
+          )
+
+          if gh release view "${version}" >/dev/null 2>&1; then
+            gh release upload "${version}" "${assets[@]}" --clobber
+          else
+            gh release create "${version}" "${assets[@]}" --title "${version}" --notes ""
+          fi
 
       - name: Upload formula artifact
         uses: actions/upload-artifact@v4
