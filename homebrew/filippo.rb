@@ -17,7 +17,13 @@ class Filippo < Formula
       bin.install ".build/release/MenuBarManager" => "filippod"
     end
 
-    bin.install "packages/cli/dist/index.js" => "filippo"
+    (libexec/"packages/cli").install Dir["packages/cli/dist"]
+    (libexec/"packages/cli").install Dir["packages/cli/node_modules"]
+    (libexec/"packages/cli").install "packages/cli/package.json"
+    (bin/"filippo").write <<~EOS
+      #!/bin/bash
+      exec "#{Formula["node"].opt_bin}/node" "#{libexec}/packages/cli/dist/index.js" "$@"
+    EOS
   end
 
   service do
@@ -30,9 +36,7 @@ class Filippo < Formula
   def caveats
     <<~EOS
       filippo requires Accessibility permission to manage menu bar icons.
-      On first launch, you'll be prompted to grant this in System Settings.
-
-      To start filippo now and auto-start on login:
+      Start the daemon once so macOS can register it for permission prompts:
         brew services start filippo
 
       To configure which icons are visible:

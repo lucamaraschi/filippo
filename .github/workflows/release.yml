@@ -82,6 +82,8 @@ jobs:
           git archive --format=tar HEAD | tar -xf - -C "dist/source-tree/filippo-${bare_version}"
           mkdir -p "dist/source-tree/filippo-${bare_version}/packages/cli/dist"
           cp -R packages/cli/dist/. "dist/source-tree/filippo-${bare_version}/packages/cli/dist/"
+          mkdir -p "dist/source-tree/filippo-${bare_version}/packages/cli/node_modules"
+          cp -R packages/cli/node_modules/. "dist/source-tree/filippo-${bare_version}/packages/cli/node_modules/"
           tar -czf "dist/${{ steps.meta.outputs.source_asset }}" -C dist/source-tree "filippo-${bare_version}"
           mv packages/cli/*.tgz dist/
 
