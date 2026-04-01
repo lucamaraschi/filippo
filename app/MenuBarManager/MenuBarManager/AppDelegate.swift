@@ -123,9 +123,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         UserDefaults.standard.set(true, forKey: didPromptForInitialSetupKey)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
-            self?.showInitialSetupPrompt()
-        }
+        scheduleInitialSetupPrompt(attempt: 0)
     }
 
     private func shouldPromptForInitialSetup() -> Bool {
@@ -135,9 +133,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return !configExists || !hasExplicitIcons
     }
 
-    private func showInitialSetupPrompt() {
+    private func scheduleInitialSetupPrompt(attempt: Int) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
+            self?.showInitialSetupPrompt(attempt: attempt)
+        }
+    }
+
+    private func showInitialSetupPrompt(attempt: Int) {
         let itemNames = currentSetupItemNames()
-        guard !itemNames.isEmpty else { return }
+        guard !itemNames.isEmpty else {
+            if attempt < 8 {
+                scheduleInitialSetupPrompt(attempt: attempt + 1)
+            } else {
+                UserDefaults.standard.removeObject(forKey: didPromptForInitialSetupKey)
+            }
+            return
+        }
 
         NSApp.activate(ignoringOtherApps: true)
 

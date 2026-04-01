@@ -32,6 +32,10 @@ class Filippo < Formula
     EOS
   end
 
+  def post_install
+    system "/usr/bin/open", "#{opt_prefix}/Filippo.app"
+  end
+
   service do
     run [opt_prefix/"Filippo.app/Contents/MacOS/filippod"]
     keep_alive true
