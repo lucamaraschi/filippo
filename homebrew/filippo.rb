@@ -14,8 +14,14 @@ class Filippo < Formula
       system "swift", "build",
              "-c", "release",
              "--disable-sandbox"
-      bin.install ".build/release/MenuBarManager" => "filippod"
+      system "bash", "../../scripts/build_macos_app_bundle.sh",
+             ".build/release/MenuBarManager",
+             buildpath/"Filippo.app",
+             version.to_s
     end
+
+    prefix.install buildpath/"Filippo.app"
+    bin.install_symlink prefix/"Filippo.app/Contents/MacOS/filippod" => "filippod"
 
     (libexec/"packages/cli").install Dir["packages/cli/dist"]
     (libexec/"packages/cli").install Dir["packages/cli/node_modules"]
@@ -27,7 +33,7 @@ class Filippo < Formula
   end
 
   service do
-    run opt_bin/"filippod"
+    run [opt_prefix/"Filippo.app/Contents/MacOS/filippod"]
     keep_alive true
     log_path var/"log/filippo.log"
     error_log_path var/"log/filippo.err"
@@ -38,6 +44,9 @@ class Filippo < Formula
       filippo requires Accessibility permission to manage menu bar icons.
       Start the daemon once so macOS can register it for permission prompts:
         brew services start filippo
+
+      Filippo is installed as:
+        #{opt_prefix}/Filippo.app
 
       To configure which icons are visible:
         filippo configure

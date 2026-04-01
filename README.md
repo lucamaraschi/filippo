@@ -34,6 +34,7 @@ brew install lucamaraschi/tap/filippo
 
 This installs:
 
+- `Filippo.app` — the menu bar app bundle used for macOS permissions and background execution
 - `filippod` — the background daemon
 - `filippo` — the CLI / TUI
 
@@ -79,6 +80,8 @@ If you installed via Homebrew, you can also use:
 ```bash
 brew services start filippo
 ```
+
+Homebrew installs the daemon inside `Filippo.app`, and `filippod` is exposed as a convenience symlink.
 
 ## Accessibility Permission
 

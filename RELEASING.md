@@ -94,5 +94,6 @@ make release-formula \
 ## Notes
 
 - The Homebrew formula builds `filippod` from source on the end user's Mac and installs the bundled CLI at the same time.
+- The Homebrew formula also wraps the daemon in `Filippo.app` so macOS permission prompts attach to an app bundle identity.
 - npm remains a separate release surface for users who only want the CLI.
 - The daemon requires Accessibility permission on first use.

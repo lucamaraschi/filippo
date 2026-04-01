@@ -9,7 +9,9 @@ const BREW_TAP = "lucamaraschi/tap";
 const BREW_FORMULA = "filippo";
 
 const SEARCH_PATHS = [
+  "/usr/local/opt/filippo/Filippo.app/Contents/MacOS/filippod",
   "/usr/local/bin/filippod",
+  "/opt/homebrew/opt/filippo/Filippo.app/Contents/MacOS/filippod",
   "/opt/homebrew/bin/filippod",
   join(homedir(), ".nix-profile/bin/filippod"),
   join(homedir(), ".local/bin/filippod"),
@@ -73,7 +75,7 @@ export function printInstallInstructions(): void {
   console.log(chalk.cyan("    cd filippo && make app install\n"));
   console.log(
     chalk.dim(
-      `  After installing, start it with: ${chalk.reset("filippod")}`,
+      `  After installing, start it with: ${chalk.reset("brew services start filippo")}`,
     ),
   );
   console.log(
@@ -89,7 +91,7 @@ export function printNotRunningMessage(): void {
     chalk.yellow(`\n  filippo daemon is installed but not running.\n`),
   );
   console.log(chalk.bold("  Start it with:"));
-  console.log(chalk.cyan(`    filippod\n`));
+  console.log(chalk.cyan(`    brew services start filippo\n`));
   console.log(chalk.bold("  Or auto-start on login:"));
   console.log(chalk.cyan(`    filippo install\n`));
 }
