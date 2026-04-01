@@ -54,14 +54,24 @@ make install
 ```
 
 ## Quick Start
+If you installed via Homebrew, start with the app bundle:
 
-Run the interactive configurator:
+```bash
+open /opt/homebrew/opt/filippo/Filippo.app
+```
+
+On first launch, Filippo should:
+
+- ask for Accessibility permission
+- ask whether it should start automatically at login
+
+Then configure your icons with either:
 
 ```bash
 filippo configure
 ```
 
-After saving, Filippo will ask whether the daemon should auto-start at login.
+or the native Filippo menu in the menu bar.
 
 Once the daemon is running, you can also use Filippo directly from the menu bar:
 
@@ -75,13 +85,13 @@ If you prefer to start it manually:
 filippod
 ```
 
-If you installed via Homebrew, you can also use:
+If you prefer the manual service path, you can still use:
 
 ```bash
 brew services start filippo
 ```
 
-Homebrew installs the daemon inside `Filippo.app`, and `filippod` is exposed as a convenience symlink.
+Homebrew installs the daemon inside `Filippo.app`, and `filippod` is exposed as a convenience symlink for advanced use.
 
 ## Accessibility Permission
 

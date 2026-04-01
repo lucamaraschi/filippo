@@ -76,6 +76,7 @@ Then verify the user install path:
 
 ```bash
 brew install lucamaraschi/tap/filippo
+open /opt/homebrew/opt/filippo/Filippo.app
 filippo --help
 filippod --help
 ```
