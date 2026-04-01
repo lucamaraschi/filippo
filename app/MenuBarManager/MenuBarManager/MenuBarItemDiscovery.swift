@@ -71,11 +71,12 @@ class MenuBarItemDiscovery {
         // Sort by x position (left to right)
         items.sort { $0.frame.origin.x < $1.frame.origin.x }
 
-        // Deduplicate by owner name (keep first occurrence)
+        // Deduplicate by display name so one process can still expose multiple
+        // distinct menu bar items when the window server gives them unique titles.
         var seen = Set<String>()
         var unique: [DiscoveredMenuItem] = []
         for item in items {
-            let key = item.ownerName
+            let key = Self.displayName(for: item)
             if !seen.contains(key) {
                 seen.insert(key)
                 unique.append(item)
@@ -95,6 +96,17 @@ class MenuBarItemDiscovery {
             "Spotlight": "Spotlight",
         ]
 
-        return nameMap[item.ownerName] ?? item.ownerName
+        let baseName = nameMap[item.ownerName] ?? item.ownerName
+        let title = item.title.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !title.isEmpty else {
+            return baseName
+        }
+
+        if title == item.ownerName || title == baseName {
+            return baseName
+        }
+
+        return title
     }
 }

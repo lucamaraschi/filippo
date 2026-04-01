@@ -6,11 +6,11 @@
     <string>com.filippo.agent</string>
     <key>ProgramArguments</key>
     <array>
-        <string>__BINARY__</string>
+        <string>/usr/bin/open</string>
+        <string>-gj</string>
+        <string>__APP__</string>
     </array>
     <key>RunAtLoad</key>
-    <true/>
-    <key>KeepAlive</key>
     <true/>
     <key>StandardOutPath</key>
     <string>/tmp/filippo.log</string>

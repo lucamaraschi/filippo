@@ -120,7 +120,12 @@ uninstall:
 # --- Launch Agent ---
 install-agent:
 	@mkdir -p ~/Library/LaunchAgents
-	@sed "s|__BINARY__|$$(which filippod 2>/dev/null || echo $(DAEMON_DEST))|" \
+	@daemon_path="$$(which filippod 2>/dev/null || echo $(DAEMON_DEST))"; \
+	app_path="$${daemon_path%%/Contents/MacOS/*}"; \
+	if [ "$$app_path" = "$$daemon_path" ]; then \
+		app_path="$$daemon_path"; \
+	fi; \
+	sed "s|__APP__|$$app_path|" \
 		launchd/com.filippo.agent.plist > ~/Library/LaunchAgents/com.filippo.agent.plist
 	launchctl load ~/Library/LaunchAgents/com.filippo.agent.plist
 

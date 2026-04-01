@@ -48,20 +48,36 @@ final class LaunchAgentManager {
     }
 
     private func plist(executablePath: String) -> String {
-        """
+        let appPath = appBundlePath(for: executablePath)
+        let programArguments: String
+
+        if let appPath {
+            programArguments = """
+                <key>ProgramArguments</key>
+                <array>
+                    <string>/usr/bin/open</string>
+                    <string>-gj</string>
+                    <string>\(appPath)</string>
+                </array>
+            """
+        } else {
+            programArguments = """
+                <key>ProgramArguments</key>
+                <array>
+                    <string>\(executablePath)</string>
+                </array>
+            """
+        }
+
+        return """
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
         <plist version="1.0">
         <dict>
             <key>Label</key>
             <string>\(label)</string>
-            <key>ProgramArguments</key>
-            <array>
-                <string>\(executablePath)</string>
-            </array>
+            \(programArguments)
             <key>RunAtLoad</key>
-            <true/>
-            <key>KeepAlive</key>
             <true/>
             <key>StandardOutPath</key>
             <string>/tmp/filippo.log</string>
@@ -70,5 +86,14 @@ final class LaunchAgentManager {
         </dict>
         </plist>
         """
+    }
+
+    private func appBundlePath(for executablePath: String) -> String? {
+        let marker = ".app/Contents/MacOS/"
+        guard let range = executablePath.range(of: marker) else {
+            return nil
+        }
+
+        return String(executablePath[..<range.upperBound]).replacingOccurrences(of: "/Contents/MacOS/", with: "")
     }
 }

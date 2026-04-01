@@ -42,7 +42,10 @@ class Filippo < Formula
   def caveats
     <<~EOS
       filippo requires Accessibility permission to manage menu bar icons.
-      Start the daemon once so macOS can register it for permission prompts:
+      Launch the app bundle once so macOS can register it in Accessibility:
+        open "#{opt_prefix}/Filippo.app"
+
+      Then start background launch at login:
         brew services start filippo
 
       Filippo is installed as:

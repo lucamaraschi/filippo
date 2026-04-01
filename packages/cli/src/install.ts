@@ -24,20 +24,35 @@ export async function hasLaunchAgent(): Promise<boolean> {
   }
 }
 
+function appBundlePath(binaryPath: string): string | null {
+  const marker = ".app/Contents/MacOS/";
+  const index = binaryPath.indexOf(marker);
+  if (index === -1) return null;
+  return binaryPath.slice(0, index + 4);
+}
+
 export function generatePlist(binaryPath: string): string {
+  const appPath = appBundlePath(binaryPath);
+  const programArguments = appPath
+    ? `    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/open</string>
+        <string>-gj</string>
+        <string>${appPath}</string>
+    </array>`
+    : `    <key>ProgramArguments</key>
+    <array>
+        <string>${binaryPath}</string>
+    </array>`;
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
     <key>Label</key>
     <string>${LABEL}</string>
-    <key>ProgramArguments</key>
-    <array>
-        <string>${binaryPath}</string>
-    </array>
+${programArguments}
     <key>RunAtLoad</key>
-    <true/>
-    <key>KeepAlive</key>
     <true/>
     <key>StandardOutPath</key>
     <string>/tmp/filippo.log</string>
