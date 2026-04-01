@@ -89,7 +89,7 @@ jobs:
         id: sha
         shell: bash
         run: |
-          shasum -a 256 dist/* > dist/checksums.txt
+          find dist -maxdepth 1 -type f -print0 | sort -z | xargs -0 shasum -a 256 > dist/checksums.txt
           source_sha="$(shasum -a 256 "dist/${{ steps.meta.outputs.source_asset }}" | awk '{print $1}')"
           echo "source_sha=${source_sha}" >> "$GITHUB_OUTPUT"
           echo "source_sha=${source_sha}" >> "$GITHUB_ENV"
