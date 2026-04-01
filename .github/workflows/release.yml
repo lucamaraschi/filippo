@@ -122,16 +122,29 @@ jobs:
   update-homebrew-tap:
     runs-on: ubuntu-latest
     needs: build-release
-    if: ${{ secrets.HOMEBREW_TAP_TOKEN != '' }}
 
     steps:
+      - name: Detect tap token
+        id: tap-token
+        shell: bash
+        env:
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          if [[ -n "${HOMEBREW_TAP_TOKEN}" ]]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Download rendered formula
+        if: ${{ steps.tap-token.outputs.available == 'true' }}
         uses: actions/download-artifact@v4
         with:
           name: homebrew-formula
           path: dist
 
       - name: Check out Homebrew tap
+        if: ${{ steps.tap-token.outputs.available == 'true' }}
         uses: actions/checkout@v4
         with:
           repository: lucamaraschi/homebrew-tap
@@ -139,6 +152,7 @@ jobs:
           path: tap
 
       - name: Update formula in tap
+        if: ${{ steps.tap-token.outputs.available == 'true' }}
         shell: bash
         run: |
           mkdir -p tap/Formula
@@ -149,3 +163,7 @@ jobs:
           git add Formula/filippo.rb
           git commit -m "filippo ${{ needs.build-release.outputs.version }}" || exit 0
           git push
+
+      - name: Skip tap update
+        if: ${{ steps.tap-token.outputs.available != 'true' }}
+        run: echo "HOMEBREW_TAP_TOKEN is not configured; skipping Homebrew tap update."
