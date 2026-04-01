@@ -4,6 +4,10 @@
   "description": "Declarative menu bar icon manager for macOS — CLI & TUI",
   "type": "module",
   "license": "MIT",
+  "homepage": "https://github.com/lucamaraschi/filippo",
+  "bugs": {
+    "url": "https://github.com/lucamaraschi/filippo/issues"
+  },
   "bin": {
     "filippo": "./dist/index.js"
   },
@@ -27,12 +31,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "",
+    "url": "git+https://github.com/lucamaraschi/filippo.git",
     "directory": "packages/cli"
   },
   "scripts": {
     "build": "tsup src/index.ts --format esm --target node20 --clean",
     "dev": "tsx src/index.ts",
+    "test": "node --import tsx --test --test-concurrency=1",
+    "test:coverage": "node --import tsx --test --test-concurrency=1 --experimental-test-coverage",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },

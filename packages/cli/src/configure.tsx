@@ -135,7 +135,7 @@ interface DisplayItem {
   active: boolean;
 }
 
-function mergeItemsWithConfig(
+export function mergeItemsWithConfig(
   liveItems: MenuBarItem[],
   cfg: Config,
 ): DisplayItem[] {
@@ -163,7 +163,7 @@ function mergeItemsWithConfig(
   return items;
 }
 
-function getItemStatus(name: string, cfg: Config): Status {
+export function getItemStatus(name: string, cfg: Config): Status {
   if (cfg.icons.visible.includes(name)) return "visible";
   if (cfg.icons.hidden.includes(name)) return "hidden";
   if (cfg.icons.disabled.includes(name)) return "disabled";

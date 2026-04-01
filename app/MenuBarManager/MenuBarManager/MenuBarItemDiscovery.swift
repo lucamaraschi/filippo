@@ -19,7 +19,7 @@ class MenuBarItemDiscovery {
     /// Discover all current menu bar items by querying the window server.
     func discoverItems() -> [DiscoveredMenuItem] {
         guard let windowInfoList = CGWindowListCopyWindowInfo(
-            [.optionOnScreenOnly, .excludeDesktopElements],
+            [.excludeDesktopElements],
             kCGNullWindowID
         ) as? [[String: Any]] else {
             return []

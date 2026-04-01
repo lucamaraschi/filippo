@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { createInterface } from "node:readline/promises";
 import { render } from "ink";
 import React from "react";
 import chalk from "chalk";
@@ -13,7 +14,7 @@ import {
 } from "./config.js";
 import { fetchItems, sendRequest, isAppRunning, type MenuBarItem } from "./ipc.js";
 import { Configure } from "./configure.js";
-import { install, uninstall } from "./install.js";
+import { install, uninstall, hasLaunchAgent } from "./install.js";
 import { checkDaemon, printInstallInstructions, printNotRunningMessage } from "./daemon.js";
 
 const [, , command, ...args] = process.argv;
@@ -126,6 +127,7 @@ async function cmdDoctor() {
 async function cmdConfigure() {
   const cfg = await loadConfig();
   let items: MenuBarItem[] = [];
+  let saved = false;
 
   const daemon = await checkDaemon();
 
@@ -151,6 +153,7 @@ async function cmdConfigure() {
       items,
       configPath: defaultPath(),
       onSave: async (newCfg: Config) => {
+        saved = true;
         await saveConfig(newCfg);
         console.log(chalk.green("Config saved to " + defaultPath()));
 
@@ -163,6 +166,10 @@ async function cmdConfigure() {
   );
 
   await waitUntilExit();
+
+  if (saved && daemon.path) {
+    await maybePromptForAutostart(daemon.path);
+  }
 }
 
 async function cmdStatus() {
@@ -255,6 +262,29 @@ function configToItems(cfg: Config): MenuBarItem[] {
     items.push({ name, owner: name, status: "disabled", active: false });
   }
   return items;
+}
+
+async function maybePromptForAutostart(binaryPath?: string) {
+  if (!binaryPath) return;
+  if (await hasLaunchAgent()) return;
+
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  try {
+    const answer = await rl.question(
+      `${chalk.dim("Auto-start filippo daemon at login?")} ${chalk.cyan("[Y/n]")} `,
+    );
+
+    const normalized = answer.trim().toLowerCase();
+    if (normalized === "" || normalized === "y" || normalized === "yes") {
+      await install(binaryPath);
+    }
+  } finally {
+    rl.close();
+  }
 }
 
 main().catch((e) => {

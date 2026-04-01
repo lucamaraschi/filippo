@@ -30,6 +30,14 @@ export function socketPath(): string {
   );
 }
 
+export function parseResponse(data: string): IPCResponse {
+  try {
+    return JSON.parse(data) as IPCResponse;
+  } catch {
+    throw new Error(`Invalid response: ${data}`);
+  }
+}
+
 function connectToSocket(): Promise<Socket> {
   return new Promise((resolve, reject) => {
     const sock = connect(socketPath(), () => resolve(sock));
@@ -49,10 +57,10 @@ export async function sendRequest(req: IPCRequest): Promise<IPCResponse> {
       const newlineIdx = data.indexOf("\n");
       if (newlineIdx !== -1) {
         try {
-          const resp = JSON.parse(data.slice(0, newlineIdx)) as IPCResponse;
+          const resp = parseResponse(data.slice(0, newlineIdx));
           sock.destroy();
           resolve(resp);
-        } catch (e) {
+        } catch {
           sock.destroy();
           reject(new Error(`Invalid response: ${data}`));
         }
@@ -63,7 +71,7 @@ export async function sendRequest(req: IPCRequest): Promise<IPCResponse> {
     sock.on("end", () => {
       if (data.trim()) {
         try {
-          resolve(JSON.parse(data) as IPCResponse);
+          resolve(parseResponse(data));
         } catch {
           reject(new Error(`Invalid response: ${data}`));
         }

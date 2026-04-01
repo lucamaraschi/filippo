@@ -8,6 +8,27 @@ cd /Users/batman/src/lm/filippo
 
 Make sure you have Node.js >= 20 and Xcode CLI tools installed.
 
+## Fast path
+
+If you just want the friendliest local flow, use the Make targets:
+
+```bash
+# Show all available developer targets
+make help
+
+# Install CLI dependencies once
+make bootstrap
+
+# Default local verification
+make test
+
+# Full local verification, including CLI coverage
+make sanity
+```
+
+`make test` runs CLI typecheck, CLI build, CLI tests, and a Swift build using writable scratch paths.
+`make sanity` does the same and also runs CLI coverage.
+
 ---
 
 ## Step 1: Build everything
@@ -155,6 +176,23 @@ Expected:
 
 ---
 
+## Step 7b: Test the native menu UI
+
+With the daemon running:
+
+- click the Filippo control in the menu bar
+- verify the menu shows daemon status and `Start at login`
+- change one icon from `Hidden` to `Visible`
+- change the same icon back to `Hidden`
+
+Expected:
+- the menu opens reliably
+- `Start at login` toggles without crashing
+- the selected icon changes state and the config file persists the change
+- you may still see a single move animation, but not repeated reshuffling
+
+---
+
 ## Step 8: Test config file live reload
 
 With the daemon still running, edit the config directly:
@@ -180,6 +218,7 @@ Expected: the daemon terminal should print "Config file changed, reloading..." a
 
 - Click the `‹` icon in your menu bar → hidden icons should appear (icon changes to `›`)
 - Click again → they hide again
+- Click the Filippo control next to it → the Filippo menu should open without moving any icons by itself
 
 ---
 

@@ -7,15 +7,24 @@ import { findDaemon, printInstallInstructions } from "./daemon.js";
 
 const LABEL = "com.filippo.agent";
 
-function launchAgentsDir(): string {
+export function launchAgentsDir(): string {
   return join(homedir(), "Library", "LaunchAgents");
 }
 
-function plistPath(): string {
+export function plistPath(): string {
   return join(launchAgentsDir(), `${LABEL}.plist`);
 }
 
-function generatePlist(binaryPath: string): string {
+export async function hasLaunchAgent(): Promise<boolean> {
+  try {
+    await access(plistPath());
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function generatePlist(binaryPath: string): string {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">

@@ -1,0 +1,74 @@
+[filippo-debug] divider lengths hidden=10000 disabled=10000
+IPC server listening on /Users/batman/Library/Application Support/filippo/filippo.sock
+MenuBarManager started
+[filippo-debug] divider lengths hidden=10000 disabled=10000
+[filippo-debug] reconcile mode=collapsed force=false discovered=7
+[filippo-debug] anchors primary=x=1361,y=1069,w=36,h=43 hiddenDivider=x=-3655,y=1069,w=5016,h=43 disabledDivider=x=-8849,y=1069,w=5016,h=43
+[filippo-debug] item Stream Deck owner=Stream Deck status=hidden actualZone=visible desiredZone=hidden frame=x=1468,y=0,w=38,h=43 window=69
+[filippo-debug] move hide Stream Deck success=true src=x=1487,y=21 dst=x=-3688,y=21 frame=x=1468,y=0,w=38,h=43
+[filippo-debug] item Input Sources owner=TextInputMenuAgent status=hidden actualZone=visible desiredZone=hidden frame=x=0,y=0,w=35,h=43 window=31
+[filippo-debug] item Rectangle owner=Rectangle status=hidden actualZone=hidden desiredZone=hidden frame=x=-3693,y=0,w=38,h=43 window=17
+[filippo-debug] item Spotlight owner=Spotlight status=hidden actualZone=hidden desiredZone=hidden frame=x=-3725,y=0,w=32,h=43 window=29
+[filippo-debug] item Control Center owner=Control Center status=hidden actualZone=hidden desiredZone=hidden frame=x=-3763,y=0,w=38,h=43 window=14
+[filippo-debug] item 1Password owner=1Password status=hidden actualZone=hidden desiredZone=hidden frame=x=-3795,y=0,w=32,h=43 window=92
+[filippo-debug] item Raycast owner=Raycast status=hidden actualZone=hidden desiredZone=hidden frame=x=-3833,y=0,w=38,h=43 window=18
+[filippo-debug] divider lengths hidden=22 disabled=10000
+[filippo-debug] toggle -> expanded
+[filippo-debug] divider lengths hidden=22 disabled=10000
+[filippo-debug] reconcile mode=expanded force=true discovered=7
+[filippo-debug] anchors primary=x=1399,y=1069,w=36,h=43 hiddenDivider=x=1361,y=1069,w=38,h=43 disabledDivider=x=-3871,y=1069,w=5016,h=43
+[filippo-debug] item Stream Deck owner=Stream Deck status=visible actualZone=hidden desiredZone=visible frame=x=1285,y=0,w=38,h=43 window=69
+[filippo-debug] move show Stream Deck success=true src=x=1304,y=21 dst=x=1570,y=21 frame=x=1285,y=0,w=38,h=43
+[filippo-debug] item Rectangle owner=Rectangle status=hidden actualZone=hidden desiredZone=hidden frame=x=1323,y=0,w=38,h=43 window=17
+[filippo-debug] move hide Rectangle success=true src=x=1342,y=21 dst=x=1328,y=21 frame=x=1323,y=0,w=38,h=43
+[filippo-debug] item Spotlight owner=Spotlight status=hidden actualZone=hidden desiredZone=hidden frame=x=1253,y=0,w=32,h=43 window=29
+[filippo-debug] move hide Spotlight success=true src=x=1269,y=21 dst=x=1287,y=21 frame=x=1253,y=0,w=32,h=43
+[filippo-debug] item Control Center owner=Control Center status=hidden actualZone=hidden desiredZone=hidden frame=x=1215,y=0,w=38,h=43 window=14
+[filippo-debug] move hide Control Center success=true src=x=1234,y=21 dst=x=1246,y=21 frame=x=1215,y=0,w=38,h=43
+[filippo-debug] item 1Password owner=1Password status=hidden actualZone=hidden desiredZone=hidden frame=x=1183,y=0,w=32,h=43 window=92
+[filippo-debug] move hide 1Password success=true src=x=1199,y=21 dst=x=1205,y=21 frame=x=1183,y=0,w=32,h=43
+[filippo-debug] item Raycast owner=Raycast status=hidden actualZone=hidden desiredZone=hidden frame=x=1145,y=0,w=38,h=43 window=18
+[filippo-debug] move hide Raycast success=true src=x=1164,y=21 dst=x=1164,y=21 frame=x=1145,y=0,w=38,h=43
+[filippo-debug] item Input Sources owner=TextInputMenuAgent status=hidden actualZone=hidden desiredZone=hidden frame=x=0,y=0,w=35,h=43 window=31
+[filippo-debug] divider lengths hidden=22 disabled=10000
+[filippo-debug] reconcile mode=expanded force=false discovered=7
+[filippo-debug] anchors primary=x=1399,y=1069,w=36,h=43 hiddenDivider=x=1361,y=1069,w=38,h=43 disabledDivider=x=-3871,y=1069,w=5016,h=43
+[filippo-debug] item Stream Deck owner=Stream Deck status=visible actualZone=visible desiredZone=visible frame=x=1468,y=0,w=38,h=43 window=69
+[filippo-debug] item Rectangle owner=Rectangle status=hidden actualZone=hidden desiredZone=hidden frame=x=1285,y=0,w=38,h=43 window=17
+[filippo-debug] item Spotlight owner=Spotlight status=hidden actualZone=hidden desiredZone=hidden frame=x=1253,y=0,w=32,h=43 window=29
+[filippo-debug] item Control Center owner=Control Center status=hidden actualZone=hidden desiredZone=hidden frame=x=1215,y=0,w=38,h=43 window=14
+[filippo-debug] item 1Password owner=1Password status=hidden actualZone=hidden desiredZone=hidden frame=x=1183,y=0,w=32,h=43 window=92
+[filippo-debug] item Raycast owner=Raycast status=hidden actualZone=hidden desiredZone=hidden frame=x=1145,y=0,w=38,h=43 window=18
+[filippo-debug] item Input Sources owner=TextInputMenuAgent status=hidden actualZone=hidden desiredZone=hidden frame=x=0,y=0,w=35,h=43 window=31
+Config file changed, reloading...
+[filippo-debug] divider lengths hidden=22 disabled=10000
+[filippo-debug] reconcile mode=expanded force=true discovered=7
+[filippo-debug] anchors primary=x=1361,y=1069,w=36,h=43 hiddenDivider=x=1323,y=1069,w=38,h=43 disabledDivider=x=-3871,y=1069,w=5016,h=43
+[filippo-debug] item Stream Deck owner=Stream Deck status=hidden actualZone=visible desiredZone=hidden frame=x=1468,y=0,w=38,h=43 window=69
+[filippo-debug] move hide Stream Deck success=true src=x=1487,y=21 dst=x=1290,y=21 frame=x=1468,y=0,w=38,h=43
+[filippo-debug] item Rectangle owner=Rectangle status=hidden actualZone=hidden desiredZone=hidden frame=x=1285,y=0,w=38,h=43 window=17
+[filippo-debug] move hide Rectangle success=true src=x=1304,y=21 dst=x=1246,y=21 frame=x=1285,y=0,w=38,h=43
+[filippo-debug] item Spotlight owner=Spotlight status=hidden actualZone=hidden desiredZone=hidden frame=x=1253,y=0,w=32,h=43 window=29
+[filippo-debug] move hide Spotlight success=true src=x=1269,y=21 dst=x=1205,y=21 frame=x=1253,y=0,w=32,h=43
+[filippo-debug] item Control Center owner=Control Center status=hidden actualZone=hidden desiredZone=hidden frame=x=1215,y=0,w=38,h=43 window=14
+[filippo-debug] move hide Control Center success=true src=x=1234,y=21 dst=x=1164,y=21 frame=x=1215,y=0,w=38,h=43
+[filippo-debug] item 1Password owner=1Password status=hidden actualZone=hidden desiredZone=hidden frame=x=1183,y=0,w=32,h=43 window=92
+[filippo-debug] move hide 1Password success=true src=x=1199,y=21 dst=x=1123,y=21 frame=x=1183,y=0,w=32,h=43
+[filippo-debug] item Raycast owner=Raycast status=hidden actualZone=hidden desiredZone=hidden frame=x=1145,y=0,w=38,h=43 window=18
+[filippo-debug] move hide Raycast success=true src=x=1164,y=21 dst=x=1082,y=21 frame=x=1145,y=0,w=38,h=43
+[filippo-debug] item Input Sources owner=TextInputMenuAgent status=hidden actualZone=hidden desiredZone=hidden frame=x=0,y=0,w=35,h=43 window=31
+[filippo-debug] divider lengths hidden=22 disabled=10000
+[filippo-debug] reconcile mode=expanded force=false discovered=7
+[filippo-debug] anchors primary=x=1361,y=1069,w=36,h=43 hiddenDivider=x=1323,y=1069,w=38,h=43 disabledDivider=x=-3871,y=1069,w=5016,h=43
+[filippo-debug] item Rectangle owner=Rectangle status=hidden actualZone=visible desiredZone=hidden frame=x=1323,y=0,w=38,h=43 window=17
+[filippo-debug] item Stream Deck owner=Stream Deck status=hidden actualZone=hidden desiredZone=hidden frame=x=1285,y=0,w=38,h=43 window=69
+[filippo-debug] item Spotlight owner=Spotlight status=hidden actualZone=hidden desiredZone=hidden frame=x=1253,y=0,w=32,h=43 window=29
+[filippo-debug] item Control Center owner=Control Center status=hidden actualZone=hidden desiredZone=hidden frame=x=1215,y=0,w=38,h=43 window=14
+[filippo-debug] item 1Password owner=1Password status=hidden actualZone=hidden desiredZone=hidden frame=x=1159,y=0,w=32,h=43 window=92
+[filippo-debug] item Raycast owner=Raycast status=hidden actualZone=hidden desiredZone=hidden frame=x=1145,y=0,w=38,h=43 window=18
+[filippo-debug] item Input Sources owner=TextInputMenuAgent status=hidden actualZone=hidden desiredZone=hidden frame=x=0,y=0,w=35,h=43 window=31
+Config file changed, reloading...
+[filippo-debug] divider lengths hidden=22 disabled=10000
+[filippo-debug] reconcile mode=expanded force=false discovered=7
+[filippo-debug] anchors primary=x=1399,y=1069,w=36,h=43 hiddenDivider=x=1361,y=1069,w=38,h=43 disabledDivider=x=-3871,y=1069,w=5016,h=43
+[filippo-debug] item Rectangle owner=Rectangle 

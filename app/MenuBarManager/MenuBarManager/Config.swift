@@ -66,6 +66,47 @@ struct MenuBarConfig {
         return defaults.unknown
     }
 
+    mutating func setStatus(_ name: String, status: String) {
+        icons.visible.removeAll { $0 == name }
+        icons.hidden.removeAll { $0 == name }
+        icons.disabled.removeAll { $0 == name }
+
+        switch status {
+        case "visible":
+            icons.visible.append(name)
+        case "hidden":
+            icons.hidden.append(name)
+        case "disabled":
+            icons.disabled.append(name)
+        default:
+            break
+        }
+    }
+
+    func save(to url: URL? = nil) throws {
+        let path = url ?? Self.defaultPath
+        let directory = path.deletingLastPathComponent()
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try renderedTOML().write(to: path, atomically: false, encoding: .utf8)
+    }
+
+    private func renderedTOML() -> String {
+        let visible = renderArray(icons.visible)
+        let hidden = renderArray(icons.hidden)
+        let disabled = renderArray(icons.disabled)
+
+        return """
+        [defaults]
+        unknown = "\(escape(defaults.unknown))"
+        poll_interval = \(defaults.pollInterval)
+
+        [icons]
+        visible = \(visible)
+        hidden = \(hidden)
+        disabled = \(disabled)
+        """
+    }
+
     private static func tomlArrayToStrings(_ value: TOMLValueConvertible?) -> [String] {
         guard let array = value as? TOMLArray else { return [] }
         var result: [String] = []
@@ -75,5 +116,16 @@ struct MenuBarConfig {
             }
         }
         return result
+    }
+
+    private func renderArray(_ values: [String]) -> String {
+        let quoted = values.map { "\"\(escape($0))\"" }
+        return "[\(quoted.joined(separator: ", "))]"
+    }
+
+    private func escape(_ value: String) -> String {
+        value
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
     }
 }

@@ -1,0 +1,151 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version tag (for example v0.1.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: macos-14
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      bare_version: ${{ steps.meta.outputs.bare_version }}
+      source_asset: ${{ steps.meta.outputs.source_asset }}
+      source_url: ${{ steps.meta.outputs.source_url }}
+      source_sha: ${{ steps.sha.outputs.source_sha }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Derive release metadata
+        id: meta
+        shell: bash
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            version="${{ inputs.version }}"
+          else
+            version="${GITHUB_REF_NAME}"
+          fi
+
+          bare_version="${version#v}"
+          source_asset="filippo-${version}-source.tar.gz"
+          source_url="https://github.com/${GITHUB_REPOSITORY}/releases/download/${version}/${source_asset}"
+
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "bare_version=${bare_version}" >> "$GITHUB_OUTPUT"
+          echo "source_asset=${source_asset}" >> "$GITHUB_OUTPUT"
+          echo "source_url=${source_url}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: packages/cli/package-lock.json
+
+      - name: Install CLI dependencies
+        run: npm install --workspace=packages/cli
+
+      - name: Build CLI bundle
+        run: make cli
+
+      - name: Pack CLI npm tarball
+        working-directory: packages/cli
+        run: npm pack
+
+      - name: Build Swift daemon release binary
+        run: make app
+
+      - name: Prepare release artifacts
+        shell: bash
+        run: |
+          version="${{ steps.meta.outputs.version }}"
+          bare_version="${{ steps.meta.outputs.bare_version }}"
+          mkdir -p dist/filippod/bin
+          cp app/MenuBarManager/.build/release/MenuBarManager dist/filippod/bin/filippod
+          cp launchd/com.filippo.agent.plist dist/filippod/
+          tar -czf "dist/filippod-${version}-macos.tar.gz" -C dist filippod
+          mkdir -p "dist/source-tree/filippo-${bare_version}"
+          git archive --format=tar HEAD | tar -xf - -C "dist/source-tree/filippo-${bare_version}"
+          mkdir -p "dist/source-tree/filippo-${bare_version}/packages/cli/dist"
+          cp -R packages/cli/dist/. "dist/source-tree/filippo-${bare_version}/packages/cli/dist/"
+          tar -czf "dist/${{ steps.meta.outputs.source_asset }}" -C dist/source-tree "filippo-${bare_version}"
+          mv packages/cli/*.tgz dist/
+
+      - name: Compute release checksums
+        id: sha
+        shell: bash
+        run: |
+          shasum -a 256 dist/* > dist/checksums.txt
+          source_sha="$(shasum -a 256 "dist/${{ steps.meta.outputs.source_asset }}" | awk '{print $1}')"
+          echo "source_sha=${source_sha}" >> "$GITHUB_OUTPUT"
+          echo "source_sha=${source_sha}" >> "$GITHUB_ENV"
+
+      - name: Render Homebrew formula
+        run: |
+          bash scripts/render_homebrew_formula.sh \
+            "${{ steps.meta.outputs.bare_version }}" \
+            "${{ steps.meta.outputs.source_url }}" \
+            "${{ steps.sha.outputs.source_sha }}" \
+            dist/filippo.rb
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.version }}
+          files: |
+            dist/checksums.txt
+            dist/filippo.rb
+            dist/${{ steps.meta.outputs.source_asset }}
+            dist/filippod-${{ steps.meta.outputs.version }}-macos.tar.gz
+            dist/*.tgz
+
+      - name: Upload formula artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: homebrew-formula
+          path: dist/filippo.rb
+
+  update-homebrew-tap:
+    runs-on: ubuntu-latest
+    needs: build-release
+    if: ${{ secrets.HOMEBREW_TAP_TOKEN != '' }}
+
+    steps:
+      - name: Download rendered formula
+        uses: actions/download-artifact@v4
+        with:
+          name: homebrew-formula
+          path: dist
+
+      - name: Check out Homebrew tap
+        uses: actions/checkout@v4
+        with:
+          repository: lucamaraschi/homebrew-tap
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: tap
+
+      - name: Update formula in tap
+        shell: bash
+        run: |
+          mkdir -p tap/Formula
+          cp dist/filippo.rb tap/Formula/filippo.rb
+          cd tap
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/filippo.rb
+          git commit -m "filippo ${{ needs.build-release.outputs.version }}" || exit 0
+          git push
