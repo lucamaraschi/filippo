@@ -23,13 +23,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             object: nil
         )
 
-        // Check accessibility first — CGEvent posting requires it
-        accessibilityManager.ensureAccess { [weak self] in
-            self?.startApp()
+        startApp()
+
+        if accessibilityManager.isGranted {
+            promptForInitialSetupIfNeeded()
+        } else {
+            accessibilityManager.ensureAccess { [weak self] in
+                self?.controller.reloadConfig()
+                self?.promptForInitialSetupIfNeeded()
+            }
         }
     }
 
     private func startApp() {
+        guard controller == nil else { return }
+
         let config = MenuBarConfig.load()
         controller = MenuBarController(config: config)
         ipcServer = IPCServer(controller: controller)
@@ -38,7 +46,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         ipcServer.start()
         watchConfigFile()
         promptForAutostartIfNeeded()
-        promptForInitialSetupIfNeeded()
 
         print("MenuBarManager started")
     }
